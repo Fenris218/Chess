@@ -1,0 +1,524 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
+@keyframes shake {
+    0% {
+        transform: translate(1px, 1px) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-1px, -2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(-3px, 0px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(3px, 2px) rotate(0deg);
+    }
+
+    40% {
+        transform: translate(1px, -1px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-1px, 2px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(-3px, 1px) rotate(0deg);
+    }
+
+    70% {
+        transform: translate(3px, 1px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(-1px, -1px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(1px, 2px) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(1px, -2px) rotate(-1deg);
+    }
+}
+
+@keyframes zoomIn {
+    from {
+        scale: 0;
+        opacity: 0;
+    }
+    to {
+        scale: 1;
+        opacity: 1;
+    }
+}
+
+:root {
+    --bg-color: #302e2b;
+    --white-color: #DEEABA;
+    --black-color: #D88C34;
+    --black-highlight-color: #667376;
+    --highlight-black: rgba(0, 0, 0, 0.17);
+    --highlight-yellow: #fefbfb;
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    flex-direction: row;
+    display: flex;
+    padding: 16px;
+}
+
+.play-area {
+    display: flex;
+    flex-direction: column;
+    margin-left: 16px;
+    position: relative;
+}
+
+.player-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    border-radius: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 4px black;
+    height: 8vh;
+}
+
+.player-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    height: 100%;
+    transition: all .6s ease-in-out;
+}
+
+.player-info .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content .elo {
+    font-weight: bold;
+    flex: 1;
+}
+
+.content .ele-wrap {
+    display: flex;
+    width: 100%;
+}
+
+.player-info:last-child {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.player-info:last-child .avatar {
+    margin-left: 16px;
+}
+
+.player-info:first-child .avatar {
+    margin-right: 16px;
+}
+
+.player-info:first-child.alliance-white {
+    background: linear-gradient(to right, var(--white-color), transparent);
+}
+
+.player-info:first-child.alliance-black {
+    background: linear-gradient(to right, var(--black-color), transparent);
+}
+
+.player-info:last-child.alliance-black {
+    background: linear-gradient(to left, var(--black-color), transparent);
+}
+
+.player-info:last-child.alliance-white {
+    background: linear-gradient(to left, var(--white-color), transparent);
+}
+
+.alliance-white .content {
+    color: white;
+}
+
+.alliance-black .content {
+    color: black;
+}
+
+.player-info:last-child .ele-wrap {
+    flex-direction: row-reverse;
+}
+
+.player-info-container .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid brown;
+    box-shadow: 0 0 10px black;
+}
+
+.player-info-container .name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.defeated-pieces {
+    flex: 1;
+    background: none;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.alliance-black .pawn {
+    background: url("../img/pieces/white/pawn.png") no-repeat center center / cover;
+}
+
+.alliance-black .rook {
+    background: url("../img/pieces/white/rook.png") no-repeat center center / cover;
+}
+
+.alliance-black .knight {
+    background: url("../img/pieces/white/knight.png") no-repeat center center / cover;
+}
+
+.alliance-black .bishop {
+    background: url("../img/pieces/white/bishop.png") no-repeat center center / cover;
+}
+
+.alliance-black .queen {
+    background: url("../img/pieces/white/queen.png") no-repeat center center / cover;
+}
+
+.alliance-white .pawn {
+    background: url("../img/pieces/black/pawn.png") no-repeat center center / cover;
+}
+
+.alliance-white .rook {
+    background: url("../img/pieces/black/rook.png") no-repeat center center / cover;
+}
+
+.alliance-white .knight {
+    background: url("../img/pieces/black/knight.png") no-repeat center center / cover;
+}
+
+.alliance-white .bishop {
+    background: url("../img/pieces/black/bishop.png") no-repeat center center / cover;
+}
+
+.alliance-white .queen {
+    background: url("../img/pieces/black/queen.png") no-repeat center center / cover;
+}
+
+.pawns, .rooks, .knights, .bishops, .queens {
+    position: relative;
+    display: flex;
+    margin-left: 16px;
+}
+
+.defeated-piece {
+    width: 45px;
+    height: 45px;
+    margin-left: -30px;
+}
+
+.defeated-pieces:last-child {
+    justify-content: flex-end;
+}
+
+.game-board-container {
+    height: 80vh;
+    /*background: conic-gradient(from 90deg,*/
+    /*    rgba(94, 123, 111, 0.5),*/
+    /*    rgba(196, 154, 104, 0.5),*/
+    /*    rgba(94, 123, 111, 0.5),*/
+    /*    rgba(196, 154, 104, 0.5),*/
+    /*    rgba(94, 123, 111, 0.5));*/
+    background-color: var(--closure-color);
+    position: relative;
+    border-radius: 16px;
+    box-shadow: 0 0 10px var(--text-color);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+}
+
+.game-board-container-digit {
+    width: 20px;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 18px;
+}
+
+.game-board-container-character {
+    height: 20px;
+    display: flex;
+    padding: 0 20px;
+    flex-direction: row;
+    align-items: center;
+    color: white;
+}
+
+.character {
+    flex: 1;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-board {
+    position: absolute;
+    width: 93%;
+    height: 93%;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    border-radius: 8px;
+    overflow: hidden;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.defeated-pieces-container {
+    display: flex;
+    flex: 1;
+}
+
+.squareRow {
+    display: flex;
+    width: 100%;
+    flex: 1;
+}
+
+.square {
+    flex: 1;
+    height: 100%;
+    position: relative;
+}
+
+.white {
+    background-color: var(--white-color);
+}
+
+.black {
+    background-color: var(--black-color);
+}
+
+.piece {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.highlight {
+    position: absolute;
+    display: block;
+    width: 25%;
+    height: 25%;
+    border-radius: 50%;
+    background-color: var(--highlight-black);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.capturedColor {
+    background-color: #ee4b2b;
+}
+
+.highlightYellow.white {
+    background-color: var(--highlight-yellow);
+}
+
+.highlightYellow.black {
+    background-color: var(--black-highlight-color);
+}
+
+.shake {
+    animation: shake 0.5s;
+    animation-iteration-count: infinite;
+    background-color: #ee4b2b;
+}
+
+#prompt-pieces {
+}
+
+#prompt-pieces .prompt-piece {
+    height: 80px;
+    flex: 1;
+    margin: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    animation: zoomIn 0.5s ease-in-out;
+}
+
+.alliance-black .prompt-piece {
+    border: 2px solid var(--white-color);
+    background-color: var(--black-color);
+    box-shadow: 0 0 5px var(--white-color);
+}
+
+.alliance-white .prompt-piece {
+    border: 2px solid var(--white-color);
+    background-color: var(--white-color);
+    box-shadow: 0 0 5px var(--black-color);
+}
+
+.alliance-black .prompt-piece:hover {
+    background-color: var(--black-highlight-color);
+    box-shadow: 0 0 10px var(--white-color);
+}
+
+.alliance-white .prompt-piece:hover {
+    background-color: var(--highlight-yellow);
+    box-shadow: 0 0 10px var(--white-color);
+}
+
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    margin-left: 16px;
+    width: 43vw;
+}
+
+.right-item {
+    width: 100%;
+    margin-bottom: 16px;
+    flex: 1;
+}
+
+.right-item:last-child {
+    margin-bottom: 0;
+}
+
+.right-item__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 16px;
+    border-bottom: 3px solid var(--text-color);
+}
+
+.right-item__header .header-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    border: 2px solid var(--text-color);
+}
+
+.right-item__title {
+    font-size: 25px;
+    color: var(--text-color);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.steps-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.steps {
+    flex: 1;
+    width: 100%;
+    display: flex;
+}
+
+.steps-table {
+    height: 100%;
+    display: flex;
+}
+
+.step-item {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 8px;
+}
+
+.step-index {
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--text-color);
+}
+
+.step-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.step-avatar {
+    height: 50px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid var(--text-color);
+}
+
+.step {
+    border-radius: 8px;
+    padding: 8px 8px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.step:hover {
+    background-color: var(--overlay-color);
+    color: var(--closure-color);
+}
+
+.step__footer {
+    width: 100%;
+    padding: 16px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 3px solid var(--text-color);
+}
+
+.step__function {
+    flex: 0.15;
+    padding: 8px;
+    font-size: 20px;
+    margin: 0 4px;
+}

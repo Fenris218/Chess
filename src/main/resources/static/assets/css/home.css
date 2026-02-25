@@ -1,0 +1,256 @@
+#container {
+    animation: switchDown .6s ease-in-out;
+}
+
+#container.slide-up {
+    transform: translateY(-100%);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0 16px;
+}
+
+.content__body {
+    flex: 1;
+    margin-bottom: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.body__header {
+    width: 100%;
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.content__title {
+    color: var(--text-color);
+    font-size: 28px;
+    flex: 1;
+}
+
+.header__avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--text-color);
+    cursor: pointer;
+    position: relative;
+}
+
+.activity-list {
+    position: absolute;
+    top: 120%;
+    right: -10%;
+    display: none;
+    padding: 8px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 0 4px black;
+    animation: slideDown .25s ease-in-out;
+    transform-origin: top right;
+    width: max-content;
+}
+
+.activity-item {
+    font-size: 16px;
+    color: var(--text-color);
+    padding: 8px;
+    width: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.activity__icon {
+    font-size: 20px;
+    margin-right: 16px;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--text-color);
+    color: var(--closure-color);
+}
+
+.activity-item:hover {
+    background-color: var(--text-color);
+    color: var(--closure-color);
+}
+
+.activity-item:hover .activity__icon {
+    background-color: var(--closure-color);
+    color: var(--text-color);
+}
+
+.header__avatar .activity-list.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.rooms-container {
+    width: 100%;
+    flex: 1;
+}
+
+.rooms-table {
+    border-radius: 8px;
+    width: 100%;
+    border: 1px solid #333;
+}
+
+.rooms-table th {
+    background-color: var(--text-color);
+    color: var(--closure-color);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.rooms-table th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.rooms-table th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+.rooms-table tr {
+    min-height: 40px;
+}
+
+.rooms-table tr:last-child td:first-child {
+    border-radius: 0 0 0 8px;
+}
+
+.rooms-table tr:last-child td:last-child {
+    border-radius: 0 0 8px 0;
+}
+
+.rooms-table td {
+    text-align: center;
+}
+
+.rooms-table td .room-role-list {
+    padding: 8px 0;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.room-role-item {
+    border-radius: 4px;
+    font-size: 16px;
+    margin: 0 4px;
+    padding: 4px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 80px;
+}
+
+.content__footer {
+    flex: 0.1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content__btn {
+    flex: 0.2;
+    height: 80%;
+    margin: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.leader-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.leader-item {
+    transition: all .3s ease;
+}
+
+.introduce__label {
+    max-width: 30vw;
+    text-align: center;
+    cursor: default;
+}
+
+.leader__board {
+    margin-top: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.leader__title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.leader-container {
+    flex: 1;
+}
+
+.player {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 4px 8px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.player:hover {
+    background-color: var(--overlay-color);
+}
+
+.player__rank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.player__info {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.info__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 16px;
+}
+
+.personal__info {
+    flex: 1;
+}
+
+.info__username {
+    font-size: 16px;
+}
+
+.info__rank {
+    font-size: 12px;
+}
