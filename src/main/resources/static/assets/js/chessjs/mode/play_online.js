@@ -30,7 +30,7 @@ import {
     setIsMatchExecute,
     initStepsContainer,
     setRoomAndComponents,
-} from "../index.js";
+} from "../game_core.js";
 import {getRoom} from "../../user/api/room.js";
 import {createMatchOnline, getMatch} from "../../user/api/match.js";
 import {

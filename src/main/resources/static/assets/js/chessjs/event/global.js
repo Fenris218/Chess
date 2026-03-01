@@ -1,8 +1,7 @@
 import {
-    ROOT_DIV,
     SQUARE_SELECTOR
 } from "../helper/constants.js"
-import {globalState, ALLIANCE, OPPONENT, ROLE, matchActiveId} from "../index.js";
+import {globalState, ALLIANCE, OPPONENT, ROLE, matchActiveId} from "../game_core.js";
 import {
     selfHighlight,
     clearPreviousSelfHighlight,
@@ -20,9 +19,8 @@ import {
     getPieceAtPosition,
     moveStatus
 } from "../helper/commonHelper.js";
-import {handleEndGame, ws} from "../mode/play_online.js";
 import {alertMessage, promotion} from "../components/message.js";
-import {timeBlack, timeWhite, togglePause, getTimeRemaining } from "../components/handleClock.js";
+import {addPlayerWin, addBotWin, addDraw} from "../score.js";
 
 let highlight_state = false;
 let previousHighlight = null;
@@ -35,6 +33,20 @@ let nameMove = "";
 let promotionPiece;
 let namePromotion;
 let isEndGame = false;
+
+function resetGameState() {
+    highlight_state = false;
+    previousHighlight = null;
+    moveState = null;
+    turnWhite = true;
+    enPassantPawn = undefined;
+    enPassantMove = undefined;
+    turn = 0;
+    nameMove = "";
+    promotionPiece = undefined;
+    namePromotion = undefined;
+    isEndGame = false;
+}
 
 function pushXToNameMove() {
     nameMove = 'x' + nameMove;
@@ -882,23 +894,16 @@ async function moveOrCancelMove(square) {
                 nameMove += "+";
             }
             handleNameMove(nameMove, true);
-            if (MODE === "PLAY_WITH_BOT")
-                sendStepToServer(oldMove, square.id);
-            else if (MODE === "PLAY_ONLINE") {
-                sendStepToOthers(oldMove, square.id, namePromotion);
-                namePromotion = "";
-            }
+            await sendStepToServer(oldMove, square.id);
             nameMove = "";
             if (isEndGame) {
-                handleEndGame({
-                    title: "Chiến thắng",
-                    state: "Hết nước đi!",
-                    status,
-                    time: ALLIANCE === "WHITE" ? getTimeRemaining(timeWhite)
-                        : getTimeRemaining(timeBlack),
-                    turn: Math.floor(turn / 2),
-                    winner: ALLIANCE
-                });
+                if (status === "CHECK_MATE") {
+                    addPlayerWin();
+                    alertMessage("Chiến thắng! Chiếu hết!");
+                } else if (status === "STALE_MATE") {
+                    addDraw();
+                    alertMessage("Hòa cờ! Hết nước đi.");
+                }
             }
         } else {
             clearPreviousSelfHighlight(previousHighlight);
@@ -913,11 +918,18 @@ async function moveOrCancelMove(square) {
 }
 
 function globalEvent() {
-    ROOT_DIV.onclick = (event) => {
+    const root = document.getElementById("game-board");
+    if (!root) {
+        return;
+    }
+    root.onclick = (event) => {
         if (event.target.localName === "img") {
             const clickedId = event.target.parentNode.id;
             const flatArray = globalState.flat();
             const square = flatArray.find(el => el.id === clickedId);
+            if (!square || !square.piece) {
+                return;
+            }
             switch (square.piece.piece_name) {
                 case "WHITE_PAWN":
                     whitePawnClick(square);
@@ -958,31 +970,45 @@ function globalEvent() {
             }
         } else {
             const square = event.target.closest(SQUARE_SELECTOR);
+            if (!square) {
+                return;
+            }
             moveOrCancelMove(square);
         }
     };
 }
 
-const  matchID = localStorage.getItem('MATCH_ID');
 async function sendStepToServer(from, to) {
+    const currentMatchID = localStorage.getItem('MATCH_ID');
+    if (!currentMatchID) {
+        console.error("sendStepToServer: MATCH_ID chưa có trong localStorage!");
+        return;
+    }
     const fen = generateFen();
     try {
-        const response = await fetch("/chess/api/steps/bot", {
+        const response = await fetch("/api/steps/bot", {
             method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("TOKEN")}`
+              "Content-Type": "application/json"
             },
-            body: JSON.stringify({ matchId: matchID, fen: fen, from: from, to: to, name: nameMove }),
+            body: JSON.stringify({ matchId: Number(currentMatchID), fen: fen, from: from, to: to, name: nameMove }),
             redirect: "follow"
         });
         if (response.ok) {
             const data = await response.json();
-            nameMove = data.result.name;
+            if (!data.result || !data.result.from || !data.result.to) {
+                console.log("Bot không có nước đi (hết cờ hoặc null)");
+                return;
+            }
+            nameMove = data.result.name || "";
             turn++;
             handleNameMove(nameMove);
             nameMove = "";
             const piece = getPieceAtPosition(data.result.from);
+            if (!piece) {
+                console.error("Không tìm thấy quân tại", data.result.from);
+                return;
+            }
             prepareForMoving(piece, data.result.to);
             moveElement(piece, data.result.to);
             if (piece.piece_name.includes("PAWN") && data.result.to.includes("1")) {
@@ -991,81 +1017,35 @@ async function sendStepToServer(from, to) {
             }
             const status = moveStatus(ALLIANCE.toLowerCase());
             if (status === "CHECK_MATE" || status === "STALE_MATE") {
-                alertMessage(status);
+                if (status === "CHECK_MATE") {
+                    addBotWin();
+                    alertMessage("Bạn thua! Chiếu hết!");
+                } else {
+                    addDraw();
+                    alertMessage("Hòa cờ!");
+                }
             } else if (status === "IN_CHECK") {
-                alertMessage("Chiếu tướng");
+                alertMessage("Chiếu tướng!");
             }
             turnWhite = !turnWhite;
+        } else {
+            const errText = await response.text();
+            console.error("Server trả lỗi:", response.status, errText);
         }
     } catch (error) {
+        console.error("sendStepToServer lỗi:", error);
     }
-}
-
-function sendStepToOthers(from, to, namePromotion) {
-    const fen = generateFen();
-
-    // send to server to save in database
-    fetch("/chess/api/steps", {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("TOKEN")}`
-        },
-        body: JSON.stringify({ matchId: matchActiveId, fen: fen, from: from, to: to, name: nameMove }),
-        redirect: "follow"
-    }).then(response => response.json())
-        .catch(error => console.log(error));
-
-    // send to others
-    const dataSend = { type: "STEP", from, to, name: nameMove, fen }
-    if (namePromotion) {
-        dataSend.namePromotion = namePromotion;
-    }
-    ws.send(JSON.stringify(dataSend));
-}
-
-function receiveMoveFromOthers({ from, to, name, namePromotion }) {
-    turn++;
-    handleNameMove(name);
-    nameMove = "";
-    const piece = getPieceAtPosition(from);
-    prepareForMoving(piece, to);
-    moveElement(piece, to);
-    if (namePromotion) {
-        promotionPiece = getPieceAtPosition(to);
-        finishPromotionPawn(namePromotion);
-    }
-    const status = moveStatus(ALLIANCE.toLowerCase());
-    if (status === "CHECK_MATE" || status === "STALE_MATE") {
-        isEndGame = true;
-        let title = "Thua cuộc";
-        if (ROLE === "VIEWER") {
-            title = (turnWhite ? "Trắng" : "Đen") + " chiến thắng.";
-        }
-        handleEndGame({
-            title,
-            state: "Hết nước đi",
-            status,
-            time: turnWhite ? getTimeRemaining(timeWhite)
-                : getTimeRemaining(timeBlack),
-            turn: Math.floor(turn / 2),
-            winner: turnWhite ? "WHITE" : "BLACK"
-        });
-    } else if (status === "IN_CHECK") {
-        alert(status);
-    }
-    turnWhite = !turnWhite;
 }
 
 export {
     globalEvent,
+    resetGameState,
     calculateLegalMoves,
     changeTurn,
     setEnPassantMove,
     setTurnNumber,
     setIsEndGame,
     pushXToNameMove,
-    receiveMoveFromOthers,
     isEndGame,
     turnWhite,
     enPassantMove,

@@ -1,16 +1,11 @@
 package com.example.pbl4Version1.exception;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Setter
-@Getter
 public class AppException extends RuntimeException {
-    private ErrorCode errorCode;
-
-    public AppException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
-        this.errorCode = errorCode;
+    public AppException(String message) {
+        super(message);
     }
 
+    public AppException(ErrorCode errorCode) {
+        super(errorCode != null ? errorCode.name() : "APP_ERROR");
+    }
 }

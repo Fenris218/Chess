@@ -10,8 +10,6 @@ import com.example.pbl4Version1.chessEngine.piece.Piece;
 import com.example.pbl4Version1.chessEngine.player.Player;
 import com.google.common.collect.ImmutableList;
 
-import lombok.Getter;
-
 public class KingSafetyAnalyzer {
     private static final KingSafetyAnalyzer INSTANCE = new KingSafetyAnalyzer();
     private static final List<List<Boolean>> COLUMNS = initColumns();
@@ -98,7 +96,6 @@ public class KingSafetyAnalyzer {
         throw new RuntimeException("should not reach here!");
     }
 
-    @Getter
     static class KingDistance {
 
         final Piece enemyPiece;
@@ -107,6 +104,14 @@ public class KingSafetyAnalyzer {
         KingDistance(final Piece enemyDistance, final int distance) {
             this.enemyPiece = enemyDistance;
             this.distance = distance;
+        }
+
+        public Piece getEnemyPiece() {
+            return enemyPiece;
+        }
+
+        public int getDistance() {
+            return distance;
         }
 
         public int tropismScore() {

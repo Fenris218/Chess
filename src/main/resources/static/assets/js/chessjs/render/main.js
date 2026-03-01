@@ -1,6 +1,6 @@
 import * as pieces from "../data/piece.js";
-import {ROOT_DIV, STEPS_CONTAINER} from "../helper/constants.js";
-import { globalState, ALLIANCE } from "../index.js";
+import {STEPS_CONTAINER} from "../helper/constants.js";
+import { globalState, ALLIANCE } from "../game_core.js";
 import {
 	turnWhite,
 	enPassantMove,
@@ -38,6 +38,24 @@ const blackDefeatedPiece = {
 const whiteMoves = [];
 const blackMoves = [];
 let turnDraw = 0;
+
+function resetPieces() {
+	blackPieces.length = 0;
+	whitePieces.length = 0;
+	whiteMoves.length = 0;
+	blackMoves.length = 0;
+	whiteDefeatedPiece.pawns = 0;
+	whiteDefeatedPiece.rooks = 0;
+	whiteDefeatedPiece.knights = 0;
+	whiteDefeatedPiece.bishops = 0;
+	whiteDefeatedPiece.queens = 0;
+	blackDefeatedPiece.pawns = 0;
+	blackDefeatedPiece.rooks = 0;
+	blackDefeatedPiece.knights = 0;
+	blackDefeatedPiece.bishops = 0;
+	blackDefeatedPiece.queens = 0;
+	turnDraw = 0;
+}
 
 function globalStateRender() {
 	globalState.forEach(row => {
@@ -80,26 +98,30 @@ function pieceRender(data) {
 }
 
 function renderRow(listRow) {
-	if (ALLIANCE === "WHITE") {
-		for (let i = 0; i < listRow.length; i++) {
-			const rowEl = document.createElement("div");
-			for (let square of listRow[i]) {
-				rowEl.appendChild(square);
-			}
-			rowEl.classList.add("squareRow");
-			ROOT_DIV.appendChild(rowEl);
-		}
-	} else {
-		for (let i = listRow.length - 1; i >= 0; i--) {
-			listRow[i].reverse();
-			const rowEl = document.createElement("div");
-			for (let square of listRow[i]) {
-				rowEl.appendChild(square);
-			}
-			rowEl.classList.add("squareRow");
-			ROOT_DIV.appendChild(rowEl);
-		}
-	}
+    const root = document.getElementById("game-board");
+    if (!root) {
+        return;
+    }
+    if (ALLIANCE === "WHITE") {
+        for (let i = 0; i < listRow.length; i++) {
+            const rowEl = document.createElement("div");
+            for (let square of listRow[i]) {
+                rowEl.appendChild(square);
+            }
+            rowEl.classList.add("squareRow");
+            root.appendChild(rowEl);
+        }
+    } else {
+        for (let i = listRow.length - 1; i >= 0; i--) {
+            listRow[i].reverse();
+            const rowEl = document.createElement("div");
+            for (let square of listRow[i]) {
+                rowEl.appendChild(square);
+            }
+            rowEl.classList.add("squareRow");
+            root.appendChild(rowEl);
+        }
+    }
 }
 
 //use when you want to render board for first time when game start
@@ -639,6 +661,7 @@ function createPieceForReview(info) {
 export {
 	whiteMoves,
 	blackMoves,
+	resetPieces,
 	initGameRender,
 	initGameFromFenRender,
 	clearHighlight,

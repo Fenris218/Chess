@@ -99,7 +99,7 @@
 <script>
     const MODE = "REVIEW";
 </script>
-<script type="module" src="../assets/js/chessjs/index.js"></script>
+<script type="module" src="../assets/js/chessjs/game_core.js"></script>
 <script type="module" src="../assets/js/chessjs/mode/review.js"></script>
 </body>
 </html>

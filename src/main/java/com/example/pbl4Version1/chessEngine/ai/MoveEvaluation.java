@@ -2,14 +2,20 @@ package com.example.pbl4Version1.chessEngine.ai;
 
 import com.example.pbl4Version1.chessEngine.board.Move;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
-@Getter
-@Builder
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MoveEvaluation {
-    final Move move;
-    final int value;
+    private final Move move;
+    private final int value;
+
+    public MoveEvaluation(Move move, int value) {
+        this.move = move;
+        this.value = value;
+    }
+
+    public Move getMove() {
+        return move;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

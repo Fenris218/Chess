@@ -2,21 +2,41 @@ package com.example.pbl4Version1.dto.response;
 
 import java.util.List;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.FieldDefaults;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MatchWithBotResponse {
-    Long id;
-    UserResponse player;
-    String winner;
-    List<StepResponse> steps;
+    private Long id;
+    private String winner;
+    private List<StepResponse> steps;
+
+    public MatchWithBotResponse() {
+    }
+
+    public MatchWithBotResponse(Long id, String winner, List<StepResponse> steps) {
+        this.id = id;
+        this.winner = winner;
+        this.steps = steps;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
+
+    public List<StepResponse> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<StepResponse> steps) {
+        this.steps = steps;
+    }
 }

@@ -1,4 +1,4 @@
-import { globalState } from "../index.js";
+import { globalState } from "../game_core.js";
 import { calculateLegalMoves } from "../event/global.js";
 
 let cloneGlobalState;

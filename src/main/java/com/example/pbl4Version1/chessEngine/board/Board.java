@@ -20,9 +20,6 @@ import com.example.pbl4Version1.chessEngine.player.WhitePlayer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class Board {
     private final List<Tile> gameBoard;
     private final Collection<Piece> whitePieces;
@@ -335,15 +332,25 @@ public class Board {
     public static class Builder {
         private final Map<Integer, Piece> boardConfig;
 
-        @Getter
         private Alliance nextMoveMaker;
 
-        @Getter
-        @Setter
         private Pawn enPassantPawn;
 
         public Builder() {
             this.boardConfig = new HashMap<Integer, Piece>();
+        }
+
+        public Alliance getNextMoveMaker() {
+            return nextMoveMaker;
+        }
+
+        public Pawn getEnPassantPawn() {
+            return enPassantPawn;
+        }
+
+        public Builder setEnPassantPawn(Pawn enPassantPawn) {
+            this.enPassantPawn = enPassantPawn;
+            return this;
         }
 
         public Builder setPiece(final Piece piece) {

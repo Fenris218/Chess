@@ -1,5 +1,5 @@
 import {OVERLAY} from "../helper/constants.js";
-import {OPPONENT} from "../index.js";
+import {OPPONENT} from "../game_core.js";
 
 const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
@@ -119,8 +119,8 @@ function innerStepContainer(step, index) {
     `;
 }
 
-function innerStepAvatar(avatarWhite = "../assets/img/robot.png",
-                         avatarBlack = "../assets/img/robot.png") {
+function innerStepAvatar(avatarWhite = "/assets/img/robot.png",
+                         avatarBlack = "/assets/img/robot.png") {
     return html`
         <div class="step-index">avatar</div>
         <div class="step-container">
@@ -159,6 +159,7 @@ function innerPerson(person) {
 
 function turnOnOverlay(renderFunction, arg) {
     OVERLAY.style.zIndex = "10000";
+    OVERLAY.style.pointerEvents = "auto";
     OVERLAY.innerHTML = renderFunction(arg);
 
     const backBtn = $("#back");
@@ -172,6 +173,7 @@ function turnOnOverlay(renderFunction, arg) {
 function turnOffOverlay() {
     OVERLAY.innerHTML = "";
     OVERLAY.style.zIndex = "-10";
+    OVERLAY.style.pointerEvents = "none";
 }
 
 function turnOnGameModal(selector) {

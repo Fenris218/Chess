@@ -157,7 +157,7 @@
         let avatar = "${user.avatar}";
         let elo = "${user.elo}";
     </script>
-    <script type="module" src="../assets/js/chessjs/index.js"></script>
+    <script type="module" src="../assets/js/chessjs/game_core.js"></script>
     <script type="module" src="../assets/js/chessjs/mode/play_online.js"></script>
 </body>
 </html>

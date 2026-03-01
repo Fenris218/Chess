@@ -120,13 +120,7 @@
         </SSLHostConfig>
     </Connector>
     -->
-     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
-               SSLEnabled="true" maxThreads="200">
-     <SSLHostConfig>
-          <Certificate certificateFile="C:/Users/voquy/server.crt"
-                         certificateKeyFile="C:/Users/voquy/server.key" />
-     </SSLHostConfig>
-     </Connector>
+
     <!-- Define an AJP 1.3 Connector on port 8009 -->
     <!--
     <Connector protocol="AJP/1.3"

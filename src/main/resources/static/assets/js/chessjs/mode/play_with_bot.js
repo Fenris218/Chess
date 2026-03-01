@@ -1,34 +1,59 @@
 import { createMatchBot } from "../../user/api/match.js";
-import {confirm, innerStepAvatar} from "../components/message.js";
+import { innerStepAvatar } from "../components/message.js";
 import { STEPS_CONTAINER } from "../helper/constants.js";
-import { reCreateGame } from "../index.js";
+import { reCreateGame, loadPageFunction } from "../game_core.js";
+import { renderScore } from "../score.js";
 
 const $ = document.querySelector.bind(document);
 
-const btnNewBotMatch = $("#create-new-match");
-if (btnNewBotMatch) {
-    btnNewBotMatch.onclick = async () => {
-        let result = await confirm("Bạn chắc chắn chứ?");
-        if (result) {
-            createMatchBot().then(data => {
-                localStorage.setItem("MATCH_ID", data.id);
+async function startNewBotMatch() {
+    const data = await createMatchBot();
+    localStorage.setItem("MATCH_ID", data.id);
 
-                const div = document.createElement("div");
-                div.classList.add("step-item");
-                div.innerHTML = innerStepAvatar(data.player.avatar);
-                STEPS_CONTAINER.innerHTML = "";
-                STEPS_CONTAINER.appendChild(div);
+    if (STEPS_CONTAINER) {
+        const div = document.createElement("div");
+        div.classList.add("step-item");
+        div.innerHTML = innerStepAvatar(
+            data?.player?.avatar || "/assets/img/icon.jpg",
+            "/assets/img/robot.png"
+        );
+        STEPS_CONTAINER.innerHTML = "";
+        STEPS_CONTAINER.appendChild(div);
+    }
 
-                reCreateGame();
-            });
-        }
+    reCreateGame();
+}
+
+function initBotPage() {
+    // 0) Hiển thị tỉ số từ session
+    renderScore();
+
+    // 1) Gán alliance classes cho DOM trước
+    loadPageFunction("WHITE");
+
+    // 2) Render bàn cờ + gắn sự kiện click
+    reCreateGame();
+
+    // 3) Luôn tạo ván mới khi vào trang
+    startNewBotMatch().catch(err => {
+        console.log("Không tạo được ván mới:", err.message);
+    });
+
+    // 4) Nút tạo ván mới
+    const btnNewBotMatch = $("#create-new-match");
+    if (btnNewBotMatch) {
+        btnNewBotMatch.onclick = async () => {
+            try {
+                await startNewBotMatch();
+            } catch (e) {
+                console.log("Lỗi tạo ván mới:", e.message);
+            }
+        };
     }
 }
 
-const returnBtn = $("#return");
-if (returnBtn) {
-    returnBtn.onclick = async () => {
-        if (!(await confirm("Bạn chắc chứ?"))) return;
-        window.history.back();
-    }
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initBotPage);
+} else {
+    initBotPage();
 }

@@ -1,4 +1,4 @@
-const ROOT_DIV = document.getElementById("game-board");
+const ROOT_DIV = null;
 const GB_CONTAINER = document.querySelector(".game-board-container");
 const OVERLAY = document.querySelector("#overlay");
 const SQUARE_SELECTOR = ".square";
@@ -9,8 +9,13 @@ const PROMPT_PIECE = document.querySelectorAll(".prompt-piece");
 const STEPS_CONTAINER = document.querySelector(".steps-table");
 const MOVE_SOUND = document.getElementById("step-sound");
 
+function getRootDiv() {
+    return document.getElementById("game-board");
+}
+
 export {
     ROOT_DIV,
+    getRootDiv,
     GB_CONTAINER,
     OVERLAY,
     SQUARE_SELECTOR,
