@@ -900,9 +900,11 @@ async function moveOrCancelMove(square) {
                 if (status === "CHECK_MATE") {
                     addPlayerWin();
                     alertMessage("Chiến thắng! Chiếu hết!");
+                    sendEndGame("CHECK_MATE", "WHITE");
                 } else if (status === "STALE_MATE") {
                     addDraw();
                     alertMessage("Hòa cờ! Hết nước đi.");
+                    sendEndGame("STALE_MATE", "DRAW");
                 }
             }
         } else {
@@ -978,6 +980,20 @@ function globalEvent() {
     };
 }
 
+async function sendEndGame(gameStatus, winner) {
+    const currentMatchID = localStorage.getItem('MATCH_ID');
+    if (!currentMatchID) return;
+    try {
+        await fetch("/api/matches/bot/end", {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ matchId: Number(currentMatchID), gameStatus, winner })
+        });
+    } catch (error) {
+        console.error("sendEndGame lỗi:", error);
+    }
+}
+
 async function sendStepToServer(from, to) {
     const currentMatchID = localStorage.getItem('MATCH_ID');
     if (!currentMatchID) {
@@ -996,6 +1012,23 @@ async function sendStepToServer(from, to) {
         });
         if (response.ok) {
             const data = await response.json();
+
+            // Server đã phát hiện game kết thúc sau nước người chơi (bot bị chiếu hết/hòa)
+            if (data.result && data.result.gameStatus && data.result.gameStatus !== "ONGOING") {
+                if (!data.result.from) {
+                    // Bot không có nước đi → game đã kết thúc phía server
+                    isEndGame = true;
+                    if (data.result.gameStatus === "CHECK_MATE" && data.result.winner === "WHITE") {
+                        addPlayerWin();
+                        alertMessage("Chiến thắng! Chiếu hết!");
+                    } else if (data.result.gameStatus === "STALE_MATE" || data.result.winner === "DRAW") {
+                        addDraw();
+                        alertMessage("Hòa cờ!");
+                    }
+                    return;
+                }
+            }
+
             if (!data.result || !data.result.from || !data.result.to) {
                 console.log("Bot không có nước đi (hết cờ hoặc null)");
                 return;
@@ -1015,17 +1048,34 @@ async function sendStepToServer(from, to) {
                 promotionPiece = getPieceAtPosition(data.result.to);
                 finishPromotionPawn("QUEEN");
             }
-            const status = moveStatus(ALLIANCE.toLowerCase());
-            if (status === "CHECK_MATE" || status === "STALE_MATE") {
-                if (status === "CHECK_MATE") {
+
+            // Kiểm tra server trả về game kết thúc sau nước bot
+            if (data.result.gameStatus && data.result.gameStatus !== "ONGOING") {
+                isEndGame = true;
+                if (data.result.gameStatus === "CHECK_MATE" && data.result.winner === "BLACK") {
                     addBotWin();
                     alertMessage("Bạn thua! Chiếu hết!");
-                } else {
+                } else if (data.result.gameStatus === "STALE_MATE" || data.result.winner === "DRAW") {
                     addDraw();
                     alertMessage("Hòa cờ!");
                 }
-            } else if (status === "IN_CHECK") {
-                alertMessage("Chiếu tướng!");
+            } else {
+                // Chỉ kiểm tra frontend nếu server chưa phát hiện
+                const status = moveStatus(ALLIANCE.toLowerCase());
+                if (status === "CHECK_MATE" || status === "STALE_MATE") {
+                    isEndGame = true;
+                    if (status === "CHECK_MATE") {
+                        addBotWin();
+                        alertMessage("Bạn thua! Chiếu hết!");
+                        sendEndGame("CHECK_MATE", "BLACK");
+                    } else {
+                        addDraw();
+                        alertMessage("Hòa cờ!");
+                        sendEndGame("STALE_MATE", "DRAW");
+                    }
+                } else if (status === "IN_CHECK") {
+                    alertMessage("Chiếu tướng!");
+                }
             }
             turnWhite = !turnWhite;
         } else {

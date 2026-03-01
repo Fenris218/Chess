@@ -3,10 +3,14 @@ package com.example.pbl4Version1.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+
+import com.example.pbl4Version1.enums.PlayerType;
 
 @Entity(name = "game_step")
 public class Step {
@@ -27,6 +31,13 @@ public class Step {
 
     @Column(columnDefinition = "TEXT")
     private String boardState = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 0";
+
+    @Column(name = "step_number")
+    private int stepNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "player_type")
+    private PlayerType playerType;
 
     public Step() {
     }
@@ -77,5 +88,21 @@ public class Step {
 
     public void setBoardState(String boardState) {
         this.boardState = boardState;
+    }
+
+    public int getStepNumber() {
+        return stepNumber;
+    }
+
+    public void setStepNumber(int stepNumber) {
+        this.stepNumber = stepNumber;
+    }
+
+    public PlayerType getPlayerType() {
+        return playerType;
+    }
+
+    public void setPlayerType(PlayerType playerType) {
+        this.playerType = playerType;
     }
 }

@@ -9,5 +9,7 @@ import com.example.pbl4Version1.entity.Step;
 
 @Repository
 public interface StepRepisitory extends JpaRepository<Step, Long> {
-    List<Step> findByMatch_Id(Long matchId);
+    List<Step> findByMatch_IdOrderByStepNumberAsc(Long matchId);
+
+    int countByMatch_Id(Long matchId);
 }

@@ -18,14 +18,15 @@ public class Match {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'ONGOING'")
     private GameStatus gameStatus = GameStatus.ONGOING;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(10) DEFAULT 'WHITE'")
     private PlayerType turn = PlayerType.WHITE;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(10)")
     private PlayerType winner;
 
     @OneToMany(mappedBy = "match", fetch = FetchType.EAGER)

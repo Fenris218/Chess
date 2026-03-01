@@ -2,9 +2,12 @@ package com.example.pbl4Version1.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.pbl4Version1.dto.request.EndGameRequest;
 import com.example.pbl4Version1.dto.response.ApiResponse;
 import com.example.pbl4Version1.dto.response.MatchWithBotResponse;
 import com.example.pbl4Version1.service.MatchWithBotService;
@@ -26,5 +29,10 @@ public class MatchWithBotController {
     @GetMapping("/{matchID}")
     public ApiResponse<MatchWithBotResponse> getMatchWithBot(@PathVariable("matchID") Long matchID) {
         return ApiResponse.ok(matchWithBotService.getMatch(matchID));
+    }
+
+    @PostMapping("/end")
+    public ApiResponse<MatchWithBotResponse> endGame(@RequestBody EndGameRequest request) {
+        return ApiResponse.ok(matchWithBotService.endGame(request));
     }
 }
