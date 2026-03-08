@@ -26,13 +26,13 @@
                     </div>
                     <span class="content">
                         <span class="name">Người chơi</span>
-                        <span class="elo">---</span>
+
                     </span>
                 </div>
                 <div class="player-info">
                     <span class="content">
                         <span class="name">Máy tính</span>
-                        <span class="elo">---</span>
+
                     </span>
                     <div class="avatar" style="background: url('/assets/img/robot.png')
                     no-repeat center center / cover;">
